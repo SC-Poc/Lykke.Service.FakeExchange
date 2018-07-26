@@ -3,7 +3,7 @@
   {
     "Db":
     {
-      "LogsConnString": "${LogsConnString}:[AzureTableStorage]"
+      "LogsConnString": "${FakeExchangeService-LogsConnectionString}:[AzureTableStorage]"
     }
   },
   "MonitoringServiceClient": 
