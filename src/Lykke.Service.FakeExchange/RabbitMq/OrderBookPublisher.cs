@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Linq;
@@ -8,6 +8,8 @@ using Common.Log;
 using Lykke.Common.ExchangeAdapter.Contracts;
 using Lykke.Common.ExchangeAdapter.Server;
 using Lykke.Common.Log;
+using Lykke.RabbitMqBroker.Publisher;
+using Lykke.RabbitMqBroker.Subscriber;
 using Lykke.Service.FakeExchange.Core.Services;
 using Lykke.Service.FakeExchange.Settings;
 using Microsoft.Extensions.Hosting;
@@ -22,6 +24,8 @@ namespace Lykke.Service.FakeExchange.RabbitMq
         private readonly IFakeExchange _fakeExchange;
         private readonly ILog _log;
         private readonly RabbitMqSettings _rabbitMqSettings;
+
+        private IDisposable _subscription;
         
         public OrderBookPublisher(ILogFactory logFactory, 
             IFakeExchange fakeExchange,
@@ -48,23 +52,31 @@ namespace Lykke.Service.FakeExchange.RabbitMq
             });
             
             orderBooksObservable
-                .OnlyWithPositiveSpread()
+                //.OnlyWithPositiveSpread()
                 .PublishToRmq(
                     _rabbitMqSettings.OrderBooks.ConnectionString,
                     _rabbitMqSettings.OrderBooks.Exchanger, 
-                    _logFactory);
+                    _logFactory)
+                .ReportErrors("OrderBooksPublisher", _log)
+                .Publish();
 
             orderBooksObservable.Select(TickPrice.FromOrderBook)
                 .PublishToRmq(
                     _rabbitMqSettings.TickPrices.ConnectionString,
                     _rabbitMqSettings.TickPrices.Exchanger, 
-                    _logFactory);
+                    _logFactory)
+                .ReportErrors("TickPricesPublisher", _log)
+                .Publish();
 
+            _subscription = orderBooksObservable.Subscribe();
+            
             return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
+            _subscription?.Dispose();
+            
             return Task.CompletedTask;
         }
     }
