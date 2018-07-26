@@ -15,6 +15,8 @@ namespace Lykke.Service.FakeExchange.Core.Services
         void SetBalance(string clientId, string asset, decimal balance);
 
         void CancelLimitOrder(string clientId, Guid orderId);
+        
+        event Action<OrderBook> OrderBookChanged;
     }
 }
 

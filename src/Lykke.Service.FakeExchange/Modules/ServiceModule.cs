@@ -1,9 +1,11 @@
 ﻿using Autofac;
 using Lykke.Sdk;
 using Lykke.Service.FakeExchange.Core.Services;
+using Lykke.Service.FakeExchange.RabbitMq;
 using Lykke.Service.FakeExchange.Services;
 using Lykke.Service.FakeExchange.Settings;
 using Lykke.SettingsReader;
+using Microsoft.Extensions.Hosting;
 
 namespace Lykke.Service.FakeExchange.Modules
 {    
@@ -28,6 +30,12 @@ namespace Lykke.Service.FakeExchange.Modules
 
             builder.RegisterType<BalancesService>()
                 .As<IBalancesService>()
+                .SingleInstance();
+
+            builder.RegisterType<OrderBookPublisher>()
+                .As<IHostedService>()
+                .AsSelf()
+                .WithParameter(new TypedParameter(typeof(RabbitMqSettings), _appSettings.CurrentValue.FakeExchangeService.RabbitMq))
                 .SingleInstance();
         }
     }

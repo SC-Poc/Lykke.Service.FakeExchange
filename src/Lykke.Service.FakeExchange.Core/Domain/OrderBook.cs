@@ -27,6 +27,32 @@ namespace Lykke.Service.FakeExchange.Core.Domain
 
         public IEnumerable<Order> AllOrders => _buySide.Union(_sellSide);
         
+        public string Pair => _pair;
+
+        public IReadOnlyList<Order> Asks
+        {
+            get
+            {
+                lock (_sync)
+                {
+                    return _sellSide.ToList();    
+                }
+            }
+        }
+
+        public IReadOnlyList<Order> Bids
+        {
+            get
+            {
+                lock (_sync)
+                {
+                    return _buySide.ToList();
+                }
+            }
+        }
+
+        public event Action<OrderBook> OrderBookChanged;
+        
         public void Add(Order order)
         {
             lock (_sync)
@@ -42,6 +68,8 @@ namespace Lykke.Service.FakeExchange.Core.Domain
 
                 RemoveExecutedOrders();
             }
+            
+            OrderBookChanged?.Invoke(this);
         }
 
         private void RemoveExecutedOrders()

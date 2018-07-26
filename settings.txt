@@ -4,6 +4,19 @@
     "Db":
     {
       "LogsConnString": "${FakeExchangeService-LogsConnectionString}:[AzureTableStorage]"
+    },
+    "RabbitMq": 
+    {
+      "OrderBooks": 
+      {
+        "ConnectionString": "${RawPriceRabbitMq}:[RabbitMq]",
+        "Exchanger": "lykke.exchangeconnector.orderBooks.fakeExchange"
+      },
+      "TickPrices":
+      {
+        "ConnectionString": "${RawPriceRabbitMq}:[RabbitMq]",
+        "Exchanger": "lykke.exchangeconnector.tickPrices.fakeExchange"
+      }
     }
   },
   "MonitoringServiceClient": 
