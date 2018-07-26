@@ -1,6 +1,7 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Reactive;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,8 +9,6 @@ using Common.Log;
 using Lykke.Common.ExchangeAdapter.Contracts;
 using Lykke.Common.ExchangeAdapter.Server;
 using Lykke.Common.Log;
-using Lykke.RabbitMqBroker.Publisher;
-using Lykke.RabbitMqBroker.Subscriber;
 using Lykke.Service.FakeExchange.Core.Services;
 using Lykke.Service.FakeExchange.Settings;
 using Microsoft.Extensions.Hosting;
@@ -49,26 +48,31 @@ namespace Lykke.Service.FakeExchange.RabbitMq
                 var tcs = new TaskCompletionSource<Unit>();
                 ct.Register(r => ((TaskCompletionSource<Unit>) r).SetResult(Unit.Default), tcs);
                 await tcs.Task;
-            });
+            })
+                .Publish()
+                .RefCount();
             
-            orderBooksObservable
+            
+            var ob = orderBooksObservable
                 //.OnlyWithPositiveSpread()
                 .PublishToRmq(
                     _rabbitMqSettings.OrderBooks.ConnectionString,
                     _rabbitMqSettings.OrderBooks.Exchanger, 
                     _logFactory)
                 .ReportErrors("OrderBooksPublisher", _log)
-                .Publish();
+                .Publish()
+                .RefCount();
 
-            orderBooksObservable.Select(TickPrice.FromOrderBook)
+            var tp = orderBooksObservable.Select(TickPrice.FromOrderBook)
                 .PublishToRmq(
                     _rabbitMqSettings.TickPrices.ConnectionString,
                     _rabbitMqSettings.TickPrices.Exchanger, 
                     _logFactory)
                 .ReportErrors("TickPricesPublisher", _log)
-                .Publish();
+                .Publish()
+                .RefCount();
 
-            _subscription = orderBooksObservable.Subscribe();
+            _subscription = new CompositeDisposable(orderBooksObservable.Subscribe(), ob.Subscribe(), tp.Subscribe());
             
             return Task.CompletedTask;
         }
