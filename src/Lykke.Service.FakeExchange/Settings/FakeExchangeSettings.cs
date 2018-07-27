@@ -1,4 +1,5 @@
 ﻿using JetBrains.Annotations;
+using Lykke.Common.ExchangeAdapter.Server.Settings;
 
 namespace Lykke.Service.FakeExchange.Settings
 {
@@ -7,6 +8,6 @@ namespace Lykke.Service.FakeExchange.Settings
     {
         public DbSettings Db { get; set; }
         
-        public RabbitMqSettings RabbitMq { get; set; }
+        public OrderBookProcessingSettings RabbitMq { get; set; }
     }
 }

@@ -8,16 +8,7 @@ namespace Lykke.Service.FakeExchange.Core.Domain
 {
     public class OrderBook
     {
-        private readonly string _pair;
         private readonly IBalancesService _balancesService;
-
-        public OrderBook(
-            string pair,
-            IBalancesService balancesService)
-        {
-            _pair = pair;
-            _balancesService = balancesService;
-        }
 
         private readonly object _sync = new object();
         
@@ -25,9 +16,7 @@ namespace Lykke.Service.FakeExchange.Core.Domain
 
         private readonly List<Order> _sellSide = new List<Order>();
 
-        public IEnumerable<Order> AllOrders => _buySide.Union(_sellSide);
-        
-        public string Pair => _pair;
+        public string Pair { get; }
 
         public IReadOnlyList<Order> Asks
         {
@@ -35,7 +24,7 @@ namespace Lykke.Service.FakeExchange.Core.Domain
             {
                 lock (_sync)
                 {
-                    return _sellSide.ToList();    
+                    return _sellSide.ToList();
                 }
             }
         }
@@ -51,7 +40,26 @@ namespace Lykke.Service.FakeExchange.Core.Domain
             }
         }
 
+        public IReadOnlyList<Order> AllOrders
+        {
+            get
+            {
+                lock (_sync)
+                {
+                    return _buySide.Union(_sellSide).ToList();
+                }
+            }
+        }
+        
         public event Action<OrderBook> OrderBookChanged;
+
+        public OrderBook(
+            string pair,
+            IBalancesService balancesService)
+        {
+            Pair = pair;
+            _balancesService = balancesService;
+        }
         
         public void Add(Order order)
         {
@@ -93,9 +101,9 @@ namespace Lykke.Service.FakeExchange.Core.Domain
 
         private void Validate(Order order)
         {
-            if (!string.Equals(order.Pair, _pair, StringComparison.InvariantCultureIgnoreCase))
+            if (!string.Equals(order.Pair, Pair, StringComparison.InvariantCultureIgnoreCase))
             {
-                throw new InvalidInstrumentException($"OrderBook for {_pair} can't accept orders for {order.Pair}");
+                throw new InvalidInstrumentException($"OrderBook for {Pair} can't accept orders for {order.Pair}");
             }
             
             if (!_balancesService.UserHasEnoughBalanceForOrder(order))
