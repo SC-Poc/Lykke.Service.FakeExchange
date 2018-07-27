@@ -19,6 +19,18 @@ namespace Lykke.Service.FakeExchange.Core.Domain.Exchange
 
         public event Action<OrderBook> OrderBookChanged;
         
+        public IEnumerable<string> GetAllInstruments()
+        {
+            return _orderBooks.Keys;
+        }
+
+        public OrderBook GetOrderBook(string assetPair)
+        {
+            _orderBooks.TryGetValue(assetPair, out var orderBook);
+
+            return orderBook;
+        }
+
         public FakeExchange(IBalancesService balancesService)
         {
             _balancesService = balancesService;

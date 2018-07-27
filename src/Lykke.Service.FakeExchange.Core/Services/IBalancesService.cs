@@ -10,5 +10,8 @@ namespace Lykke.Service.FakeExchange.Core.Services
         void SetBalance(string clientId, string asset, decimal balance);
 
         bool UserHasEnoughBalanceForOrder(Order order);
+
+        void ExchangeBalancesDueToExecution(string sellerId, string buyerId, string pair, decimal executionVolume,
+            decimal executionPrice);
     }
 }

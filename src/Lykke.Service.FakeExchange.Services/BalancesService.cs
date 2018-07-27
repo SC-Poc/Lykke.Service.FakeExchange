@@ -91,5 +91,35 @@ namespace Lykke.Service.FakeExchange.Services
             quoteAsset = null;
             return false;
         }
+
+        public void ExchangeBalancesDueToExecution(
+            string sellerId, 
+            string buyerId,
+            string pair,
+            decimal executionVolume,
+            decimal executionPrice)
+        {
+            if (!TryGetAssetsFromPair(pair, out var baseAsset, out var quoteAsset))
+            {
+                return;
+            }
+            
+            decimal baseAmount = executionVolume;
+            decimal quoteAmount = executionVolume * executionPrice;
+            
+            AddBalance(sellerId, baseAsset, -baseAmount);
+            AddBalance(buyerId, baseAsset, baseAmount);
+            
+            AddBalance(sellerId, quoteAsset, quoteAmount);
+            AddBalance(buyerId, quoteAsset, -quoteAmount);
+        }
+        
+        private void AddBalance(string clientId, string asset, decimal balance)
+        {
+            if (_balances.TryGetValue(clientId, out var userBalances))
+            {
+                userBalances.AddOrUpdate(asset, balance, (key, prevValue) => prevValue + balance);
+            }
+        }
     }
 }

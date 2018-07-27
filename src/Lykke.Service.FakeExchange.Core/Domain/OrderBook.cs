@@ -142,6 +142,12 @@ namespace Lykke.Service.FakeExchange.Core.Domain
                 {
                     orderForMatching.Execute(volumeForExecution, orderForMatching.Price);
                     order.Execute(volumeForExecution, orderForMatching.Price);
+                    
+                    
+                    var sellerId = new [] { order, orderForMatching}.Single(x => x.TradeType == TradeType.Sell).ClientId;
+                    var buyerId = new [] { order, orderForMatching}.Single(x => x.TradeType == TradeType.Buy).ClientId;
+                    
+                    _balancesService.ExchangeBalancesDueToExecution(sellerId, buyerId, order.Pair, volumeForExecution, orderForMatching.Price);
                 }
 
                 if (!order.HasRemainingVolume)
