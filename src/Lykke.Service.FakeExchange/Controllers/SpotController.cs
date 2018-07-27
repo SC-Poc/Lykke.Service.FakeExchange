@@ -62,5 +62,17 @@ namespace Lykke.Service.FakeExchange.Controllers
 
             return Task.FromResult((OrderModel)null);
         }
+
+        public override Task<GetWalletsResponse> GetWalletBalancesAsync()
+        {
+            return Task.FromResult(new GetWalletsResponse()
+            {
+                Wallets = Api.GetBalances().Select(x => new WalletBalanceModel()
+                {
+                    Asset = x.Key,
+                    Balance = x.Value
+                }).ToList()
+            });
+        }
     }
 }
