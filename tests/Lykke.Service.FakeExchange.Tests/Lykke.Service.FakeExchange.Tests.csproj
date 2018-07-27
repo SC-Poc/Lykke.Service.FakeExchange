@@ -11,5 +11,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Lykke.Service.FakeExchange.Core\Lykke.Service.FakeExchange.Core.csproj" />
+    <ProjectReference Include="..\..\src\Lykke.Service.FakeExchange.Services\Lykke.Service.FakeExchange.Services.csproj" />
   </ItemGroup>
 </Project>

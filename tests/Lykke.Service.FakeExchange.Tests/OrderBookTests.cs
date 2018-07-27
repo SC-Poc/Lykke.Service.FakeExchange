@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using Lykke.Service.FakeExchange.Core.Domain;
+using Lykke.Service.FakeExchange.Core.Domain.Exceptions;
 using Lykke.Service.FakeExchange.Core.Services;
 using Moq;
 using Xunit;
@@ -110,6 +111,19 @@ namespace Lykke.Service.FakeExchange.Tests
             
             Assert.True(sell.HasExecutions);
             Assert.False(sell.HasRemainingVolume);
+        }
+
+        [Fact]
+        public void ClientHasInsufficientFunds()
+        {
+            var balancesService = new Mock<IBalancesService>();
+            balancesService.Setup(x => x.UserHasEnoughBalanceForOrder(It.IsAny<Order>())).Returns(false);
+
+            var ob = new OrderBook(Pair, balancesService.Object);
+            
+            var sell = Order.CreateLimit(ClientId1, TradeType.Sell, Pair, 100, 60);
+
+            Assert.Throws<InsufficientBalanceException>(() => ob.Add(sell));
         }
     }
 }
