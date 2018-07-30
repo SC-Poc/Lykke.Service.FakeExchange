@@ -52,12 +52,6 @@ namespace Lykke.Service.FakeExchange.Core.Domain
 
         public bool HasExecutions => _executions.Any();
 
-        public static Order CreateLimit(string clientId, TradeType tradeType, string pair, decimal price,
-            decimal volume)
-        {
-            return new Order(clientId, OrderType.Limit, tradeType, pair, price, volume);
-        }
-
         public void Execute(decimal volume, decimal price)
         {
             if (OrderStatus == OrderStatus.Canceled || OrderStatus == OrderStatus.Fill ||
@@ -85,6 +79,19 @@ namespace Lykke.Service.FakeExchange.Core.Domain
             {
                 OrderStatus = OrderStatus.Canceled;
             }
+        }
+        
+        
+
+        public static Order CreateLimit(string clientId, TradeType tradeType, string pair, decimal price,
+            decimal volume)
+        {
+            return new Order(clientId, OrderType.Limit, tradeType, pair, price, volume);
+        }
+
+        public static Order CreateMarket(string clientId, TradeType tradeType, string pair, decimal volume)
+        {
+            return new Order(clientId, OrderType.Market, tradeType, pair, Decimal.Zero, volume);
         }
     }
 }

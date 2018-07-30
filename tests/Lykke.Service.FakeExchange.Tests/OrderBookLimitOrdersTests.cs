@@ -7,7 +7,7 @@ using Xunit;
 
 namespace Lykke.Service.FakeExchange.Tests
 {
-    public class OrderBookTests
+    public class OrderBookLimitOrdersTests
     {
         private const string ClientId1 = "1";
         private const string ClientId2 = "2";

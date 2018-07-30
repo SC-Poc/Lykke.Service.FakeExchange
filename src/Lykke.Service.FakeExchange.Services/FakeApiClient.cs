@@ -21,7 +21,7 @@ namespace Lykke.Service.FakeExchange.Services
             return _fakeExchange.CreateOrder(Order.CreateLimit(_clientId, tradeType, pair, price, volume));
         }
 
-        public IEnumerable<Order> GetLimitOrders()
+        public IEnumerable<Order> GetOrders()
         {
             return _fakeExchange.GetOrders(_clientId);
         }
@@ -39,6 +39,11 @@ namespace Lykke.Service.FakeExchange.Services
         public void CancelLimitOrder(Guid orderId)
         {
             _fakeExchange.CancelLimitOrder(_clientId, orderId);
+        }
+
+        public Guid CreateMarketOrder(string pair, TradeType tradeType, decimal volume)
+        {
+            return _fakeExchange.CreateOrder(Order.CreateMarket(_clientId, tradeType, pair, volume));
         }
     }
 }

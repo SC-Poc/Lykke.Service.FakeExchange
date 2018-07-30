@@ -161,7 +161,34 @@ namespace Lykke.Service.FakeExchange.Core.Domain
 
         private bool TryExecuteMarket(Order order)
         {
-            throw new NotImplementedException();
+            var ordersForMatching =
+                (order.TradeType == TradeType.Buy
+                    ? _sellSide.OrderBy(x => x.Price)
+                    : _buySide.OrderByDescending(x => x.Price)).ToList();
+
+            if (ordersForMatching.Sum(x => x.RemainingVolume) < order.RemainingVolume)
+            {
+                throw new NotEnoughLiquidityException($"Not enough liquidity to execute market order {order}");
+            }
+
+            foreach (var orderForMatching in ordersForMatching)
+            {
+                var volumeForExecution = Math.Min(orderForMatching.RemainingVolume, order.RemainingVolume);
+
+                if (volumeForExecution > 0)
+                {
+                    orderForMatching.Execute(volumeForExecution, orderForMatching.Price);
+                    order.Execute(volumeForExecution, orderForMatching.Price);
+                    
+                    
+                    var sellerId = new [] { order, orderForMatching}.Single(x => x.TradeType == TradeType.Sell).ClientId;
+                    var buyerId = new [] { order, orderForMatching}.Single(x => x.TradeType == TradeType.Buy).ClientId;
+                    
+                    _balancesService.ExchangeBalancesDueToExecution(sellerId, buyerId, order.Pair, volumeForExecution, orderForMatching.Price);
+                }
+            }
+            
+            return order.HasExecutions;
         }
 
         public void Cancel(Order order)
