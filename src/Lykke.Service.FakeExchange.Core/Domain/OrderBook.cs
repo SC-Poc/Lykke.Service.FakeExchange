@@ -198,13 +198,21 @@ namespace Lykke.Service.FakeExchange.Core.Domain
         {
             lock (_sync)
             {
-                if (order.TradeType == TradeType.Sell && _sellSide.Remove(order))
+                if (order.TradeType == TradeType.Sell)
                 {
-                    order.Cancel();
+                    if (_sellSide.Remove(order))
+                    {
+                        order.Cancel();
+                        OrderBookChanged?.Invoke(this);
+                    }
                 }
-                else if (order.TradeType == TradeType.Buy && _buySide.Remove(order))
+                else if (order.TradeType == TradeType.Buy)
                 {
-                    order.Cancel();
+                    if (_buySide.Remove(order))
+                    {
+                        order.Cancel();
+                        OrderBookChanged?.Invoke(this);
+                    }
                 }
             }
         }
