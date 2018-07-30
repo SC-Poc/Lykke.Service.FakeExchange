@@ -25,7 +25,7 @@ namespace Lykke.Service.FakeExchange.Modules
         {
             // Do not register entire settings in container, pass necessary settings to services which requires them
 
-            builder.RegisterType<Core.Domain.Exchange.FakeExchange>()
+            builder.RegisterType<Core.Domain.FakeExchange>()
                 .As<IFakeExchange>()
                 .SingleInstance();
 

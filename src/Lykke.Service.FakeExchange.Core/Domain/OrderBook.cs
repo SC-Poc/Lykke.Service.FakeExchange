@@ -103,11 +103,13 @@ namespace Lykke.Service.FakeExchange.Core.Domain
         {
             if (!string.Equals(order.Pair, Pair, StringComparison.InvariantCultureIgnoreCase))
             {
+                order.Reject();
                 throw new InvalidInstrumentException($"OrderBook for {Pair} can't accept orders for {order.Pair}");
             }
             
             if (!_balancesService.UserHasEnoughBalanceForOrder(order))
             {
+                order.Reject();
                 throw new InsufficientBalanceException($"User {order.ClientId} can't place order {order}");
             }
         }
@@ -168,6 +170,7 @@ namespace Lykke.Service.FakeExchange.Core.Domain
 
             if (ordersForMatching.Sum(x => x.RemainingVolume) < order.RemainingVolume)
             {
+                order.Reject();
                 throw new NotEnoughLiquidityException($"Not enough liquidity to execute market order {order}");
             }
 

@@ -52,7 +52,7 @@ namespace Lykke.Service.FakeExchange.Core.Domain
 
         public bool HasExecutions => _executions.Any();
 
-        public void Execute(decimal volume, decimal price)
+        internal void Execute(decimal volume, decimal price)
         {
             if (OrderStatus == OrderStatus.Canceled || OrderStatus == OrderStatus.Fill ||
                 OrderStatus == OrderStatus.Rejected)
@@ -68,17 +68,22 @@ namespace Lykke.Service.FakeExchange.Core.Domain
             }
         }
 
-        public override string ToString()
-        {
-            return this.ToJson();
-        }
-
-        public void Cancel()
+        internal void Cancel()
         {
             if (OrderStatus == OrderStatus.Active)
             {
                 OrderStatus = OrderStatus.Canceled;
             }
+        }
+
+        internal void Reject()
+        {
+            OrderStatus = OrderStatus.Rejected;
+        }
+
+        public override string ToString()
+        {
+            return this.ToJson();
         }
         
         

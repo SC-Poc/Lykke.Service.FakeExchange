@@ -124,6 +124,7 @@ namespace Lykke.Service.FakeExchange.Tests
             var sell = Order.CreateLimit(ClientId1, TradeType.Sell, Pair, 100, 60);
 
             Assert.Throws<InsufficientBalanceException>(() => ob.Add(sell));
+            Assert.Equal(OrderStatus.Rejected, sell.OrderStatus);
         }
     }
 }

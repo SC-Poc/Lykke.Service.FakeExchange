@@ -76,11 +76,11 @@ namespace Lykke.Service.FakeExchange.RabbitMq
     {
         public static ContractOrderBook ToContractBook(this OrderBook orderBook)
         {
-            return new ContractOrderBook(Core.Domain.Exchange.FakeExchange.Name, 
+            return new ContractOrderBook(Core.Domain.FakeExchange.Name, 
                 orderBook.Pair, 
                 DateTime.UtcNow,
-                orderBook.Asks.Select(x => new OrderBookItem(x.Price, x.Volume)),
-                orderBook.Bids.Select(x => new OrderBookItem(x.Price, x.Volume)));
+                orderBook.Asks.Select(x => new OrderBookItem(x.Price, x.RemainingVolume)),
+                orderBook.Bids.Select(x => new OrderBookItem(x.Price, x.RemainingVolume)));
         }
     }
 }

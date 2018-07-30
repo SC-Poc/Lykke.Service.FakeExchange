@@ -104,6 +104,7 @@ namespace Lykke.Service.FakeExchange
                 {
                     x.UseAuthenticationMiddleware(token => new FakeApiClient(token, app.ApplicationServices.GetRequiredService<IFakeExchange>()));
                     x.UseHandleBusinessExceptionsMiddleware();
+                    x.UseHandleDomainExceptionsMiddleware();
                 };
 
                 /*

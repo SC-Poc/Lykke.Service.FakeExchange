@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Lykke.Service.FakeExchange.Core.Services;
 
-namespace Lykke.Service.FakeExchange.Core.Domain.Exchange
+namespace Lykke.Service.FakeExchange.Core.Domain
 {
     public class FakeExchange : IFakeExchange
     {

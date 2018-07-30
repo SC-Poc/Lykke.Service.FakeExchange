@@ -33,6 +33,7 @@ namespace Lykke.Service.FakeExchange.Tests
             ob.Add(sell);
             
             Assert.Throws<NotEnoughLiquidityException>(() => ob.Add(market));
+            Assert.Equal(OrderStatus.Rejected, market.OrderStatus);
         }
         
         [Fact]
