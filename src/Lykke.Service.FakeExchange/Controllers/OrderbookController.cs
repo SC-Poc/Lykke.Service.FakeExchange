@@ -27,13 +27,6 @@ namespace Lykke.Service.FakeExchange.Controllers
             return _fakeExchange.GetAllInstruments().ToArray();
         }
 
-        [SwaggerOperation("GetAllTickPrices")]
-        [HttpGet("GetAllTickPrices")]
-        public async Task<IReadOnlyCollection<TickPrice>> GetAllTickPrices()
-        {
-            throw new NotImplementedException();
-        }
-
         [SwaggerOperation("GetOrderBook")]
         [HttpGet("GetOrderBook")]
         public async Task<OrderBook> GetOrderBook(string assetPair)
