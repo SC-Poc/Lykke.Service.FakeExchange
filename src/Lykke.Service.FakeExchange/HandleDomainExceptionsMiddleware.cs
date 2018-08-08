@@ -13,10 +13,10 @@ namespace Lykke.Service.FakeExchange
     {
         public static void UseHandleDomainExceptionsMiddleware(this IApplicationBuilder app)
         {
-            app.Use(new Func<HttpContext, Func<Task>, Task>(SetStatusOnBusinessError));
+            app.Use(SetStatusOnBusinessError);
         }
 
-        public static async Task SetStatusOnBusinessError(HttpContext httpContext, Func<Task> next)
+        private static async Task SetStatusOnBusinessError(HttpContext httpContext, Func<Task> next)
         {
             try
             {
@@ -26,7 +26,7 @@ namespace Lykke.Service.FakeExchange
             {
                 MakeBadRequest(httpContext, ex.Message);
             }
-            catch (InsufficientBalanceException ex)
+            catch (InsufficientBalanceException)
             {
                 MakeBadRequest(httpContext, "notEnoughBalance");
             }
@@ -34,7 +34,7 @@ namespace Lykke.Service.FakeExchange
             {
                 MakeBadRequest(httpContext, ex.Message);
             }
-            catch (NotImplementedException ex)
+            catch (NotImplementedException)
             {
                 MakeBadRequest(httpContext, "notImplemented", HttpStatusCode.NotImplemented);
             }
