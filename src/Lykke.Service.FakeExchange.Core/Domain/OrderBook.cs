@@ -131,12 +131,22 @@ namespace Lykke.Service.FakeExchange.Core.Domain
 
         private bool TryExecuteLimit(Order order)
         {
-            var ordersForMatching =
-                order.TradeType == TradeType.Buy
-                    ? _sellSide.Where(x => x.Price <= order.Price).OrderBy(x => x.Price)
-                    : _buySide.Where(x => x.Price >= order.Price).OrderByDescending(x => x.Price);
+            var ordersForMatching = order.TradeType == TradeType.Buy
+                    ? _sellSide.Where(x => x.Price <= order.Price)
+                    : _buySide.Where(x => x.Price >= order.Price);
                     
-            foreach (var orderForMatching in ordersForMatching)
+            MatchOrders(order, ordersForMatching);
+
+            return order.HasExecutions;
+        }
+
+        private void MatchOrders(Order order, IEnumerable<Order> ordersForMatching)
+        {
+            var sortedOrdersForMatching = order.TradeType == TradeType.Buy
+                ? ordersForMatching.OrderBy(x => x.Price)
+                : ordersForMatching.OrderByDescending(x => x.Price); 
+            
+            foreach (var orderForMatching in sortedOrdersForMatching)
             {
                 var volumeForExecution = Math.Min(orderForMatching.RemainingVolume, order.RemainingVolume);
 
@@ -144,12 +154,13 @@ namespace Lykke.Service.FakeExchange.Core.Domain
                 {
                     orderForMatching.Execute(volumeForExecution, orderForMatching.Price);
                     order.Execute(volumeForExecution, orderForMatching.Price);
-                    
-                    
-                    var sellerId = new [] { order, orderForMatching}.Single(x => x.TradeType == TradeType.Sell).ClientId;
-                    var buyerId = new [] { order, orderForMatching}.Single(x => x.TradeType == TradeType.Buy).ClientId;
-                    
-                    _balancesService.ExchangeBalancesDueToExecution(sellerId, buyerId, order.Pair, volumeForExecution, orderForMatching.Price);
+
+
+                    var sellerId = new[] {order, orderForMatching}.Single(x => x.TradeType == TradeType.Sell).ClientId;
+                    var buyerId = new[] {order, orderForMatching}.Single(x => x.TradeType == TradeType.Buy).ClientId;
+
+                    _balancesService.ExchangeBalancesDueToExecution(sellerId, buyerId, order.Pair, volumeForExecution,
+                        orderForMatching.Price);
                 }
 
                 if (!order.HasRemainingVolume)
@@ -157,16 +168,11 @@ namespace Lykke.Service.FakeExchange.Core.Domain
                     break;
                 }
             }
-
-            return order.HasExecutions;
         }
 
         private bool TryExecuteMarket(Order order)
         {
-            var ordersForMatching =
-                (order.TradeType == TradeType.Buy
-                    ? _sellSide.OrderBy(x => x.Price)
-                    : _buySide.OrderByDescending(x => x.Price)).ToList();
+            var ordersForMatching = (order.TradeType == TradeType.Buy ? _sellSide : _buySide).ToList();
 
             if (ordersForMatching.Sum(x => x.RemainingVolume) < order.RemainingVolume)
             {
@@ -174,22 +180,7 @@ namespace Lykke.Service.FakeExchange.Core.Domain
                 throw new NotEnoughLiquidityException($"Not enough liquidity to execute market order {order}");
             }
 
-            foreach (var orderForMatching in ordersForMatching)
-            {
-                var volumeForExecution = Math.Min(orderForMatching.RemainingVolume, order.RemainingVolume);
-
-                if (volumeForExecution > 0)
-                {
-                    orderForMatching.Execute(volumeForExecution, orderForMatching.Price);
-                    order.Execute(volumeForExecution, orderForMatching.Price);
-                    
-                    
-                    var sellerId = new [] { order, orderForMatching}.Single(x => x.TradeType == TradeType.Sell).ClientId;
-                    var buyerId = new [] { order, orderForMatching}.Single(x => x.TradeType == TradeType.Buy).ClientId;
-                    
-                    _balancesService.ExchangeBalancesDueToExecution(sellerId, buyerId, order.Pair, volumeForExecution, orderForMatching.Price);
-                }
-            }
+            MatchOrders(order, ordersForMatching);
             
             return order.HasExecutions;
         }
