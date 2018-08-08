@@ -22,8 +22,8 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Lykke.Common.ExchangeAdapter.Server" Version="4.0.0" />
-    <PackageReference Include="Lykke.Sdk" Version="4.1.1" />
+    <PackageReference Include="Lykke.Common.ExchangeAdapter.Server" Version="4.1.1" />
+    <PackageReference Include="Lykke.Sdk" Version="5.1.3" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.1" />
   </ItemGroup>
@@ -31,9 +31,6 @@
     <ProjectReference Include="..\Lykke.Service.FakeExchange.AzureRepositories\Lykke.Service.FakeExchange.AzureRepositories.csproj" />
     <ProjectReference Include="..\Lykke.Service.FakeExchange.Core\Lykke.Service.FakeExchange.Core.csproj" />
     <ProjectReference Include="..\Lykke.Service.FakeExchange.Services\Lykke.Service.FakeExchange.Services.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models" />
   </ItemGroup>
   <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
     <ItemGroup>

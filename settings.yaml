@@ -1,0 +1,60 @@
+FakeExchangeService:
+  Db:
+    LogsConnectionString:
+      settings-key: FakeExchangeService-LogsConnectionString
+      types:
+        - AzureTableStorage
+
+  RabbitMq:
+    OrderBooks:
+      Durable:
+        settings-key: FakeExchangeService-RabbitMq-OrderBooks-Durable
+      
+      Enabled:
+        settings-key: FakeExchangeService-RabbitMq-OrderBooks-Enabled
+      
+      ConnectionString:
+        settings-key: RawPriceRabbitMq
+        types:
+          - RabbitMq
+      
+      Exchanger: lykke.exchangeconnector.orderBooks.fakeExchange
+    
+    TickPrices:
+      Durable:
+        settings-key: FakeExchangeService-RabbitMq-TickPrices-Durable
+      
+      Enabled:
+        settings-key: FakeExchangeService-RabbitMq-TickPrices-Enabled
+      
+      ConnectionString:
+        settings-key: RawPriceRabbitMq
+        types:
+          - RabbitMq
+      
+      Exchanger: lykke.exchangeconnector.tickPrices.fakeExchange
+    
+    OrderBookDepth:
+      settings-key: FakeExchangeService-RabbitMq-OrderBookDepth
+
+    MaxEventPerSecondByInstrument:
+      settings-key: FakeExchangeService-RabbitMq-MaxEventPerSecondByInstrument
+
+    AllowedAnomalisticAssets:
+      settings-key: FakeExchangeService-RabbitMq-AllowedAnomalisticAssets
+      types:
+        - JsonArray
+
+MonitoringServiceClient:
+  MonitoringServiceUrl:
+    settings-key: MonitoringServiceUrl
+
+SlackNotifications:
+  AzureQueue:
+    ConnectionString:
+      settings-key: SlackNotificationsConnString
+      types:
+        - AzureTableStorage
+
+    QueueName:
+      settings-key: SlackQueueName

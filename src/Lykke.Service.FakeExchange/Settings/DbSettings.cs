@@ -1,10 +1,12 @@
-﻿using Lykke.SettingsReader.Attributes;
+﻿using JetBrains.Annotations;
+using Lykke.SettingsReader.Attributes;
 
 namespace Lykke.Service.FakeExchange.Settings
 {
+    [UsedImplicitly]
     public class DbSettings
     {
         [AzureTableCheck]
-        public string LogsConnString { get; set; }
+        public string LogsConnectionString { get; set; }
     }
 }

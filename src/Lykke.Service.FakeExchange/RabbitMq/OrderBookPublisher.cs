@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reactive;
 using System.Reactive.Disposables;
@@ -27,7 +26,7 @@ namespace Lykke.Service.FakeExchange.RabbitMq
 
         private IDisposable _subscription;
         
-        public OrderBooksSession Session { get; private set; }
+        private OrderBooksSession Session { get; set; }
         
         public OrderBookPublisher(ILogFactory logFactory, 
             IFakeExchange fakeExchange,
@@ -52,8 +51,8 @@ namespace Lykke.Service.FakeExchange.RabbitMq
                 await tcs.Task;
             });
 
-            Session = orderBooksObservable.FromRawOrderBooks(
-                new List<string>(),
+            Session = OrderBooksSession.FromRawOrderBooks(
+                orderBooksObservable,
                 _rabbitMqSettings,
                 _logFactory);
             
