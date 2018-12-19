@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Lykke.Service.FakeExchange.Core.Domain.Exceptions
+namespace Lykke.Service.FakeExchange.Domain.Exceptions
 {
     public class NotEnoughLiquidityException : Exception
     {

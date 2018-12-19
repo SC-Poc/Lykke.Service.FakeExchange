@@ -3,7 +3,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using Lykke.Service.FakeExchange.Core.Domain.Exceptions;
+using Lykke.Service.FakeExchange.Domain.Exceptions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 

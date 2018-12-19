@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using Lykke.Service.FakeExchange.Core.Domain;
-using Lykke.Service.FakeExchange.Core.Services;
+using Lykke.Service.FakeExchange.Domain;
+using Lykke.Service.FakeExchange.Domain.Services;
 
-namespace Lykke.Service.FakeExchange.Services
+namespace Lykke.Service.FakeExchange.DomainServices.Balances
 {
     public class BalancesService : IBalancesService
     {
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<string, decimal>> _balances = new ConcurrentDictionary<string, ConcurrentDictionary<string, decimal>>();
         
-        public IDictionary<string, decimal> GetBalances(string clientId)
+        public IReadOnlyDictionary<string, decimal> GetBalances(string clientId)
         {
             if (_balances.TryGetValue(clientId, out var clientBalances))
             {

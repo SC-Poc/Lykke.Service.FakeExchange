@@ -1,6 +1,6 @@
-﻿using Lykke.Service.FakeExchange.Core.Domain;
-using Lykke.Service.FakeExchange.Core.Domain.Exceptions;
-using Lykke.Service.FakeExchange.Core.Services;
+﻿using Lykke.Service.FakeExchange.Domain;
+using Lykke.Service.FakeExchange.Domain.Exceptions;
+using Lykke.Service.FakeExchange.Domain.Services;
 using Moq;
 using Xunit;
 

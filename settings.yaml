@@ -17,9 +17,10 @@ FakeExchangeService:
         settings-key: RawPriceRabbitMq
         types:
           - RabbitMq
-      
-      Exchanger: lykke.exchangeconnector.orderBooks.fakeExchange
-    
+
+      Exchanger:
+        settings-key: FakeExchangeService-RabbitMq-OrderBooks-Exchanger
+
     TickPrices:
       Durable:
         settings-key: FakeExchangeService-RabbitMq-TickPrices-Durable
@@ -32,7 +33,8 @@ FakeExchangeService:
         types:
           - RabbitMq
       
-      Exchanger: lykke.exchangeconnector.tickPrices.fakeExchange
+      Exchanger:
+        settings-key: FakeExchangeService-RabbitMq-TickPrices-Exchanger
     
     OrderBookDepth:
       settings-key: FakeExchangeService-RabbitMq-OrderBookDepth
@@ -44,6 +46,21 @@ FakeExchangeService:
       settings-key: FakeExchangeService-RabbitMq-AllowedAnomalisticAssets
       types:
         - JsonArray
+
+  ExternalExchange:
+    OrderBooks:
+      ConnectionString:
+        settings-key: RawPriceRabbitMq
+        types:
+          - RabbitMq
+      Exchange:
+        settings-key: FakeExchangeService-ExternalExchange-OrderBooks-Exchange
+      Queue:
+        settings-key: FakeExchangeService-ExternalExchange-OrderBooks-Queue
+      
+  Matching:
+    MatchExternalOrderBooks:
+      settings-key: FakeExchangeService-Matching-MatchExternalOrderBooks
 
 MonitoringServiceClient:
   MonitoringServiceUrl:

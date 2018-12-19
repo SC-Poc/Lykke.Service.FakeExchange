@@ -1,6 +1,6 @@
 ﻿using System;
 using Lykke.Common.ExchangeAdapter.SpotController.Records;
-using Lykke.Service.FakeExchange.Core.Domain;
+using Lykke.Service.FakeExchange.Domain;
 using OrderStatus = Lykke.Common.ExchangeAdapter.SpotController.Records.OrderStatus;
 using TradeType = Lykke.Common.ExchangeAdapter.Contracts.TradeType;
 
@@ -25,31 +25,31 @@ namespace Lykke.Service.FakeExchange.ModelConverters
             };
         }
 
-        private static TradeType ConvertTradeType(Core.Domain.TradeType orderTradeType)
+        private static TradeType ConvertTradeType(Domain.TradeType orderTradeType)
         {
             switch (orderTradeType)
             {
-                case Core.Domain.TradeType.Buy:
+                case Domain.TradeType.Buy:
                     return TradeType.Buy;
-                case Core.Domain.TradeType.Sell:
+                case Domain.TradeType.Sell:
                     return TradeType.Sell;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(orderTradeType), orderTradeType, null);
             }
         }
 
-        private static OrderStatus ConvertStatus(Core.Domain.OrderStatus orderStatus)
+        private static OrderStatus ConvertStatus(Domain.OrderStatus orderStatus)
         {
             switch (orderStatus)
             {
-                case Core.Domain.OrderStatus.Active:
+                case Domain.OrderStatus.Active:
                     return OrderStatus.Active;
                 
-                case Core.Domain.OrderStatus.Fill:
+                case Domain.OrderStatus.Fill:
                     return OrderStatus.Fill;
                 
-                case Core.Domain.OrderStatus.Canceled:
-                case Core.Domain.OrderStatus.Rejected:
+                case Domain.OrderStatus.Canceled:
+                case Domain.OrderStatus.Rejected:
                     return OrderStatus.Canceled;
                 
                 default:

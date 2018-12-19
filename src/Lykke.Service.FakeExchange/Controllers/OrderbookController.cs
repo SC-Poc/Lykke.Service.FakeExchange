@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Lykke.Common.ExchangeAdapter.Contracts;
-using Lykke.Service.FakeExchange.Core.Services;
-using Lykke.Service.FakeExchange.RabbitMq;
+using Lykke.Service.FakeExchange.Domain.Services;
+using Lykke.Service.FakeExchange.ModelConverters;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
@@ -19,19 +17,20 @@ namespace Lykke.Service.FakeExchange.Controllers
             _fakeExchange = fakeExchange;
         }
         
-        
         [SwaggerOperation("GetAllInstruments")]
         [HttpGet("GetAllInstruments")]
-        public IReadOnlyCollection<string> GetAllInstruments()
+        public Task<IReadOnlyCollection<string>> GetAllInstruments()
         {
-            return _fakeExchange.GetAllInstruments().ToArray();
+            return _fakeExchange.GetAllInstrumentsAsync();
         }
 
         [SwaggerOperation("GetOrderBook")]
         [HttpGet("GetOrderBook")]
         public async Task<OrderBook> GetOrderBook(string assetPair)
         {
-            return _fakeExchange.GetOrderBook(assetPair)?.ToContractBook();
+            Domain.OrderBook order = await _fakeExchange.GetOrderBookAsync(assetPair);
+
+            return order?.ToModel();
         }
     }
 }
