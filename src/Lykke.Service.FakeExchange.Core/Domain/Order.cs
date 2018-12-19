@@ -7,7 +7,7 @@ namespace Lykke.Service.FakeExchange.Core.Domain
 {
     public class Order
     {
-        private Order(string clientId, OrderType orderType, TradeType tradeType, string pair, decimal price, decimal volume)
+        private Order(string clientId, OrderType orderType, TradeType tradeType, string pair, decimal price, decimal volume, bool isExternal = false)
         {
             Id = Guid.NewGuid();
             CreationDateTime = DateTime.UtcNow;
@@ -18,7 +18,7 @@ namespace Lykke.Service.FakeExchange.Core.Domain
             Pair = pair;
             Price = price;
             Volume = volume;
-
+            IsExternal = isExternal;
             OrderStatus = OrderStatus.Active;
         }
         
@@ -39,6 +39,8 @@ namespace Lykke.Service.FakeExchange.Core.Domain
         public string Pair { get; }
         
         public OrderStatus OrderStatus { get; private set; }
+
+        public bool IsExternal { get; }
 
         public decimal ExecutedVolume => _executions.Sum(x => x.Item1);
 
@@ -86,17 +88,16 @@ namespace Lykke.Service.FakeExchange.Core.Domain
             return this.ToJson();
         }
         
-        
-
         public static Order CreateLimit(string clientId, TradeType tradeType, string pair, decimal price,
-            decimal volume)
+            decimal volume, bool isExternal = false)
         {
-            return new Order(clientId, OrderType.Limit, tradeType, pair, price, volume);
+            return new Order(clientId, OrderType.Limit, tradeType, pair, price, volume, isExternal);
         }
 
-        public static Order CreateMarket(string clientId, TradeType tradeType, string pair, decimal volume)
+        public static Order CreateMarket(string clientId, TradeType tradeType, string pair, decimal volume,
+            bool isExternal = false)
         {
-            return new Order(clientId, OrderType.Market, tradeType, pair, Decimal.Zero, volume);
+            return new Order(clientId, OrderType.Market, tradeType, pair, Decimal.Zero, volume, isExternal);
         }
     }
 }

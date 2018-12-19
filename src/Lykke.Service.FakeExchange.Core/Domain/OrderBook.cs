@@ -50,8 +50,21 @@ namespace Lykke.Service.FakeExchange.Core.Domain
                 }
             }
         }
-        
-        public event Action<OrderBook> OrderBookChanged;
+
+        public decimal BestAskPrice => Asks.Select(o => o.Price).DefaultIfEmpty(0).Min();
+
+        public decimal BestBidPrice => Bids.Select(o => o.Price).DefaultIfEmpty(0).Max();
+
+        public bool IsEmpty
+        {
+            get
+            {
+                lock (_sync)
+                {
+                    return !_buySide.Any() && !_sellSide.Any();
+                }
+            }
+        }
 
         public OrderBook(
             string pair,
@@ -76,8 +89,15 @@ namespace Lykke.Service.FakeExchange.Core.Domain
 
                 RemoveExecutedOrders();
             }
-            
-            OrderBookChanged?.Invoke(this);
+        }
+
+        public void Remove(Func<Order, bool> predicate)
+        {
+            lock (_sync)
+            {
+                _sellSide.Where(predicate).ToList().ForEach(x => _sellSide.Remove(x));
+                _buySide.Where(predicate).ToList().ForEach(x => _buySide.Remove(x));
+            }
         }
 
         private void RemoveExecutedOrders()
@@ -194,7 +214,6 @@ namespace Lykke.Service.FakeExchange.Core.Domain
                     if (_sellSide.Remove(order))
                     {
                         order.Cancel();
-                        OrderBookChanged?.Invoke(this);
                     }
                 }
                 else if (order.TradeType == TradeType.Buy)
@@ -202,7 +221,6 @@ namespace Lykke.Service.FakeExchange.Core.Domain
                     if (_buySide.Remove(order))
                     {
                         order.Cancel();
-                        OrderBookChanged?.Invoke(this);
                     }
                 }
             }

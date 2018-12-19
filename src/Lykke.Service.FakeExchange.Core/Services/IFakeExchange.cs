@@ -16,11 +16,17 @@ namespace Lykke.Service.FakeExchange.Core.Services
 
         void CancelLimitOrder(string clientId, Guid orderId);
         
-        event Action<OrderBook> OrderBookChanged;
-        
         IEnumerable<string> GetAllInstruments();
         
         OrderBook GetOrderBook(string assetPair);
+
+        void PublishOrderBooksAsync();
+
+        void HandleExternalOrderBook(
+            string source,
+            string assetPairId,
+            IReadOnlyCollection<Order> buyOrders,
+            IReadOnlyCollection<Order> sellOrders);
     }
 }
 
