@@ -80,7 +80,7 @@ namespace Lykke.Service.FakeExchange.RabbitMq.Subscribers
                     .Select(o => Order.CreateLimit(message.Source, TradeType.Sell, message.Asset, o.Key, o.Value, true))
                     .ToArray();
 
-                _fakeExchange.HandleExternalOrderBook(message.Source, message.Asset, buyOrders, sellOrders);
+                await _fakeExchange.HandleExternalOrderBookAsync(message.Source, message.Asset, buyOrders, sellOrders);
             }
             catch (Exception exception)
             {

@@ -4,7 +4,7 @@ namespace Lykke.Service.FakeExchange.Domain.Services
 {
     public interface IBalancesService
     {
-        IDictionary<string, decimal> GetBalances(string clientId);
+        IReadOnlyDictionary<string, decimal> GetBalances(string clientId);
 
         void SetBalance(string clientId, string asset, decimal balance);
 

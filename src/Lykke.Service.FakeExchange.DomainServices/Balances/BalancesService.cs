@@ -10,7 +10,7 @@ namespace Lykke.Service.FakeExchange.DomainServices.Balances
     {
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<string, decimal>> _balances = new ConcurrentDictionary<string, ConcurrentDictionary<string, decimal>>();
         
-        public IDictionary<string, decimal> GetBalances(string clientId)
+        public IReadOnlyDictionary<string, decimal> GetBalances(string clientId)
         {
             if (_balances.TryGetValue(clientId, out var clientBalances))
             {

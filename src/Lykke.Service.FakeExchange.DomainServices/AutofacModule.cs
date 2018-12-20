@@ -3,6 +3,7 @@ using Autofac;
 using JetBrains.Annotations;
 using Lykke.Service.FakeExchange.Domain.Services;
 using Lykke.Service.FakeExchange.DomainServices.Balances;
+using Lykke.Service.FakeExchange.DomainServices.Orders;
 using Lykke.Service.FakeExchange.DomainServices.Settings;
 
 namespace Lykke.Service.FakeExchange.DomainServices
@@ -27,6 +28,10 @@ namespace Lykke.Service.FakeExchange.DomainServices
 
             builder.RegisterType<BalancesService>()
                 .As<IBalancesService>()
+                .SingleInstance();
+
+            builder.RegisterType<ClientOrdersService>()
+                .As<IClientOrdersService>()
                 .SingleInstance();
 
             RegisterTimers(builder);

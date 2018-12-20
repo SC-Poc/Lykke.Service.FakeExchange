@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Lykke.Common.ExchangeAdapter.Server;
 using Lykke.Service.FakeExchange.Domain.Services;
 using Microsoft.AspNetCore.Mvc;
@@ -18,15 +19,15 @@ namespace Lykke.Service.FakeExchange.Controllers
         }
 
         [HttpGet]
-        public IDictionary<string, decimal> GetBalances()
+        public Task<IReadOnlyDictionary<string, decimal>> GetBalances()
         {
-            return RestApi().GetBalances();
+            return RestApi().GetBalancesAsync();
         }
 
         [HttpPost]
-        public void SetBalance(string asset, decimal balance)
+        public Task SetBalance(string asset, decimal balance)
         {
-            RestApi().SetBalance(asset, balance);
+            return RestApi().SetBalanceAsync(asset, balance);
         }
     }
 }

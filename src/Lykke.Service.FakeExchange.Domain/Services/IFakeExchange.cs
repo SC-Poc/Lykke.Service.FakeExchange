@@ -1,27 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Lykke.Service.FakeExchange.Domain.Services
 {
     public interface IFakeExchange
     {
-        Guid CreateOrder(Order order);
+        Task<Guid> CreateOrderAsync(Order order);
         
-        IEnumerable<Order> GetOrders(string clientId);
+        Task<IReadOnlyCollection<Order>> GetOrdersAsync(string clientId);
         
-        IDictionary<string, decimal> GetBalances(string clientId);
+        Task<IReadOnlyDictionary<string, decimal>> GetBalancesAsync(string clientId);
         
-        void SetBalance(string clientId, string asset, decimal balance);
+        Task SetBalanceAsync(string clientId, string asset, decimal balance);
 
-        void CancelLimitOrder(string clientId, Guid orderId);
-        
-        IEnumerable<string> GetAllInstruments();
-        
-        OrderBook GetOrderBook(string assetPair);
+        Task CancelLimitOrderAsync(string clientId, Guid orderId);
 
-        void PublishOrderBooksAsync();
+        Task<IReadOnlyCollection<string>> GetAllInstrumentsAsync();
 
-        void HandleExternalOrderBook(
+        Task<OrderBook> GetOrderBookAsync(string assetPair);
+
+        Task PublishOrderBooksAsync();
+
+        Task HandleExternalOrderBookAsync(
             string source,
             string assetPairId,
             IReadOnlyCollection<Order> buyOrders,

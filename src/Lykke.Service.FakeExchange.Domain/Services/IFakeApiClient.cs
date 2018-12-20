@@ -1,20 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Lykke.Service.FakeExchange.Domain.Services
 {
     public interface IFakeApiClient
     {
-        Guid CreateLimitOrder(string pair, decimal price, decimal volume, TradeType tradeType);
+        Task<Guid> CreateLimitOrderAsync(string pair, decimal price, decimal volume, TradeType tradeType);
 
-        IEnumerable<Order> GetOrders();
+        Task<IReadOnlyCollection<Order>> GetOrdersAsync();
         
-        IDictionary<string, decimal> GetBalances();
+        Task<IReadOnlyDictionary<string, decimal>> GetBalancesAsync();
         
-        void SetBalance(string asset, decimal balance);
+        Task SetBalanceAsync(string asset, decimal balance);
         
-        void CancelLimitOrder(Guid orderId);
+        Task CancelLimitOrderAsync(Guid orderId);
         
-        Guid  CreateMarketOrder(string pair, TradeType tradeType, decimal volume);
+        Task<Guid> CreateMarketOrderAsync(string pair, TradeType tradeType, decimal volume);
     }
 }

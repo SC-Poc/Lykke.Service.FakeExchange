@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Lykke.Service.FakeExchange.Domain;
 using Lykke.Service.FakeExchange.Domain.Services;
 
@@ -13,144 +14,122 @@ namespace Lykke.Service.FakeExchange.DomainServices
 
         private readonly bool _matchExternalOrderBooks;
         private readonly IBalancesService _balancesService;
+        private readonly IClientOrdersService _clientOrdersService;
         private readonly IOrderBookPublisher _orderBookPublisher;
         private readonly ITickPricePublisher _tickPricePublisher;
 
         private readonly ConcurrentDictionary<string, OrderBook> _orderBooks = 
             new ConcurrentDictionary<string, OrderBook>(StringComparer.InvariantCultureIgnoreCase);
         
-        private readonly ConcurrentDictionary<string, ConcurrentDictionary<Guid, Order>> _userOrders = 
-            new ConcurrentDictionary<string, ConcurrentDictionary<Guid, Order>>();
-
         public FakeExchange(
             IBalancesService balancesService,
+            IClientOrdersService clientOrdersService,
             IOrderBookPublisher orderBookPublisher,
             ITickPricePublisher tickPricePublisher,
             bool matchExternalOrderBooks)
         {
             _balancesService = balancesService;
+            _clientOrdersService = clientOrdersService;
             _orderBookPublisher = orderBookPublisher;
             _tickPricePublisher = tickPricePublisher;
             _matchExternalOrderBooks = matchExternalOrderBooks;
         }
 
-        public IEnumerable<string> GetAllInstruments()
+        public Task<IReadOnlyCollection<string>> GetAllInstrumentsAsync()
         {
-            return _orderBooks.Keys;
+            return Task.FromResult((IReadOnlyCollection<string>)_orderBooks.Keys.ToArray());
         }
 
-        public OrderBook GetOrderBook(string assetPair)
+        public Task<OrderBook> GetOrderBookAsync(string assetPair)
         {
-            _orderBooks.TryGetValue(assetPair, out var orderBook);
+            _orderBooks.TryGetValue(assetPair, out OrderBook orderBook);
 
-            return orderBook;
+            return Task.FromResult(orderBook);
         }
         
-        public Guid CreateOrder(Order order)
+        public async Task<Guid> CreateOrderAsync(Order order)
         {
-            Guid orderId = AddOrder(order);
+            _clientOrdersService.Add(order);
 
-            PublishOrderBookAsync(order.Pair);
+            OrderBook orderBook = _orderBooks.GetOrAdd(order.Pair, new OrderBook(order.Pair, _balancesService));
 
-            return orderId;
+            orderBook.Add(order);
+
+            await PublishOrderBookAsync(orderBook);
+
+            return order.Id;
         }
 
-        public IEnumerable<Order> GetOrders(string clientId)
+        public Task<IReadOnlyCollection<Order>> GetOrdersAsync(string clientId)
         {
-            if (_userOrders.TryGetValue(clientId, out var ordersDictionary))
-            {
-                return ordersDictionary.Values;
-            }
-
-            return Enumerable.Empty<Order>();
+            return Task.FromResult(_clientOrdersService.GetByClientId(clientId));
         }
 
-        public IDictionary<string, decimal> GetBalances(string clientId)
+        public Task<IReadOnlyDictionary<string, decimal>> GetBalancesAsync(string clientId)
         {
-            return _balancesService.GetBalances(clientId);
+            return Task.FromResult(_balancesService.GetBalances(clientId));
         }
 
-        public void SetBalance(string clientId, string asset, decimal balance)
+        public Task SetBalanceAsync(string clientId, string asset, decimal balance)
         {
             _balancesService.SetBalance(clientId, asset, balance);
+
+            return Task.CompletedTask;
         }
 
-        public void CancelLimitOrder(string clientId, Guid orderId)
+        public async Task CancelLimitOrderAsync(string clientId, Guid orderId)
         {
-            if (_userOrders.TryGetValue(clientId, out var userOrders) && 
-                userOrders.TryGetValue(orderId, out var order) &&
-                _orderBooks.TryGetValue(order.Pair, out var orderBook))
+            Order order = _clientOrdersService.GetById(clientId, orderId);
+
+            if (_orderBooks.TryGetValue(order.Pair, out OrderBook orderBook))
             {
                 orderBook.Cancel(order);
 
-                PublishOrderBookAsync(order.Pair);
+                await PublishOrderBookAsync(orderBook);
             }
         }
 
-        public void HandleExternalOrderBook(
+        public Task HandleExternalOrderBookAsync(
             string source,
             string assetPairId,
             IReadOnlyCollection<Order> buyOrders,
             IReadOnlyCollection<Order> sellOrders)
         {
             if (!_matchExternalOrderBooks)
-                return;
+                return Task.CompletedTask;
 
-            OrderBook orderBook = GetOrAddOrderBook(assetPairId);
+            OrderBook orderBook = _orderBooks.GetOrAdd(assetPairId, new OrderBook(assetPairId, _balancesService));
+
             orderBook.Remove(o => o.IsExternal);
 
-            foreach (var order in buyOrders)
+            foreach (Order order in buyOrders.OrderByDescending(o => o.Price))
             {
-                AddOrder(order);
+                orderBook.Add(order);
             }
 
-            foreach (var order in sellOrders)
+            foreach (Order order in sellOrders.OrderBy(o => o.Price))
             {
-                AddOrder(order);
+                orderBook.Add(order);
             }
 
-            PublishOrderBookAsync(assetPairId);
+            return PublishOrderBookAsync(orderBook);
         }
 
-        private Guid AddOrder(Order order)
+        public async Task PublishOrderBooksAsync()
         {
-            _userOrders.TryAdd(order.ClientId, new ConcurrentDictionary<Guid, Order>());
-            _userOrders[order.ClientId].TryAdd(order.Id, order);
-
-            OrderBook orderBook = GetOrAddOrderBook(order.Pair);
-            orderBook.Add(order);
-
-            return order.Id;
-        }
-
-        private OrderBook GetOrAddOrderBook(string assetPairId)
-        {
-            OrderBook orderBook = _orderBooks.GetOrAdd(assetPairId, new OrderBook(assetPairId, _balancesService));
-            return orderBook;
-        }
-
-        public void PublishOrderBooksAsync()
-        {
-            foreach (var orderBook in _orderBooks.Values)
+            foreach (OrderBook orderBook in _orderBooks.Values)
             {
-                if (!orderBook.IsEmpty)
-                {
-                    _orderBookPublisher.PublishAsync(orderBook).GetAwaiter().GetResult();
-
-                    _tickPricePublisher.PublishAsync(TickPrice.FromOrderBook(FakeExchange.Name, orderBook)).GetAwaiter().GetResult();
-                }
+                await PublishOrderBookAsync(orderBook);
             }
         }
 
-        private void PublishOrderBookAsync(string assetPairId)
+        private async Task PublishOrderBookAsync(OrderBook orderBook)
         {
-            OrderBook orderBook = GetOrAddOrderBook(assetPairId);
-
             if (!orderBook.IsEmpty)
             {
-                _orderBookPublisher.PublishAsync(orderBook).GetAwaiter().GetResult();
+                await _orderBookPublisher.PublishAsync(orderBook);
 
-                _tickPricePublisher.PublishAsync(TickPrice.FromOrderBook(FakeExchange.Name, orderBook)).GetAwaiter().GetResult();
+                await _tickPricePublisher.PublishAsync(TickPrice.FromOrderBook(FakeExchange.Name, orderBook));
             }
         }
     }

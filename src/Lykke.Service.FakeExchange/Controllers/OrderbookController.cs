@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Lykke.Common.ExchangeAdapter.Contracts;
 using Lykke.Service.FakeExchange.Domain.Services;
@@ -20,16 +19,18 @@ namespace Lykke.Service.FakeExchange.Controllers
         
         [SwaggerOperation("GetAllInstruments")]
         [HttpGet("GetAllInstruments")]
-        public IReadOnlyCollection<string> GetAllInstruments()
+        public Task<IReadOnlyCollection<string>> GetAllInstruments()
         {
-            return _fakeExchange.GetAllInstruments().ToArray();
+            return _fakeExchange.GetAllInstrumentsAsync();
         }
 
         [SwaggerOperation("GetOrderBook")]
         [HttpGet("GetOrderBook")]
         public async Task<OrderBook> GetOrderBook(string assetPair)
         {
-            return _fakeExchange.GetOrderBook(assetPair)?.ToModel();
+            Domain.OrderBook order = await _fakeExchange.GetOrderBookAsync(assetPair);
+
+            return order?.ToModel();
         }
     }
 }
