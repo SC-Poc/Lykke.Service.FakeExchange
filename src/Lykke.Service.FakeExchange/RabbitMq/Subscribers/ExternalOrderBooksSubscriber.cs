@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Common.Log;
@@ -9,13 +7,13 @@ using JetBrains.Annotations;
 using Lykke.Common.Log;
 using Lykke.RabbitMqBroker;
 using Lykke.RabbitMqBroker.Subscriber;
-using Lykke.Service.FakeExchange.Core.Domain;
-using Lykke.Service.FakeExchange.Core.Services;
+using Lykke.Service.FakeExchange.Domain;
+using Lykke.Service.FakeExchange.Domain.Services;
 using Lykke.Service.FakeExchange.Settings.Rabbit;
 using Microsoft.Extensions.Hosting;
 using OrderBook = Lykke.Common.ExchangeAdapter.Contracts.OrderBook;
 
-namespace Lykke.Service.FakeExchange.RabbitMq.Subscriber
+namespace Lykke.Service.FakeExchange.RabbitMq.Subscribers
 {
     [UsedImplicitly]
     public class ExternalOrderBookSubscriber : IHostedService, IDisposable

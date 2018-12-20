@@ -8,7 +8,7 @@ using Lykke.Common.ExchangeAdapter.Server.Settings;
 using Lykke.Common.Log;
 using Lykke.RabbitMqBroker.Publisher;
 using Lykke.RabbitMqBroker.Subscriber;
-using Lykke.Service.FakeExchange.Core.Services;
+using Lykke.Service.FakeExchange.Domain.Services;
 using Microsoft.Extensions.Hosting;
 
 namespace Lykke.Service.FakeExchange.RabbitMq.Publishers
@@ -27,10 +27,10 @@ namespace Lykke.Service.FakeExchange.RabbitMq.Publishers
             _logFactory = logFactory;
         }
 
-        public Task PublishAsync(Core.Domain.OrderBook orderBook)
+        public Task PublishAsync(Domain.OrderBook orderBook)
         {
             var message = new OrderBook(
-                Core.Domain.FakeExchange.Name,
+                DomainServices.FakeExchange.Name,
                 orderBook.Pair,
                 DateTime.UtcNow,
                 orderBook.Asks.Select(x => new OrderBookItem(x.Price, x.RemainingVolume)),

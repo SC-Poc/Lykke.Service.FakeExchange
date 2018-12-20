@@ -8,7 +8,4 @@
   <ItemGroup>
     <PackageReference Include="Lykke.AzureStorage" Version="8.10.0" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Lykke.Service.FakeExchange.Core\Lykke.Service.FakeExchange.Core.csproj" />
-  </ItemGroup>
 </Project>

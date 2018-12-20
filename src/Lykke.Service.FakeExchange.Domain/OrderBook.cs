@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Lykke.Service.FakeExchange.Core.Domain.Exceptions;
-using Lykke.Service.FakeExchange.Core.Services;
+using Lykke.Service.FakeExchange.Domain.Exceptions;
+using Lykke.Service.FakeExchange.Domain.Services;
 
-namespace Lykke.Service.FakeExchange.Core.Domain
+namespace Lykke.Service.FakeExchange.Domain
 {
     public class OrderBook
     {

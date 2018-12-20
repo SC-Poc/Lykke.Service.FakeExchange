@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using Lykke.Common.ExchangeAdapter.Server;
-using Lykke.Service.FakeExchange.Core.Services;
+using Lykke.Service.FakeExchange.Domain.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Lykke.Service.FakeExchange.Controllers

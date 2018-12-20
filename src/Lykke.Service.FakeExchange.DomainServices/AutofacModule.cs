@@ -1,10 +1,11 @@
 ﻿using System;
 using Autofac;
 using JetBrains.Annotations;
-using Lykke.Service.FakeExchange.Core.Services;
-using Lykke.Service.FakeExchange.Services.Settings;
+using Lykke.Service.FakeExchange.Domain.Services;
+using Lykke.Service.FakeExchange.DomainServices.Balances;
+using Lykke.Service.FakeExchange.DomainServices.Settings;
 
-namespace Lykke.Service.FakeExchange.Services
+namespace Lykke.Service.FakeExchange.DomainServices
 {
     [UsedImplicitly]
     public class AutofacModule : Module
@@ -19,7 +20,7 @@ namespace Lykke.Service.FakeExchange.Services
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<Core.Domain.FakeExchange>()
+            builder.RegisterType<FakeExchange>()
                 .WithParameter(new TypedParameter(typeof(bool), _matchingSettings.MatchExternalOrderBooks))
                 .As<IFakeExchange>()
                 .SingleInstance();

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Common;
 
-namespace Lykke.Service.FakeExchange.Core.Domain
+namespace Lykke.Service.FakeExchange.Domain
 {
     public class Order
     {

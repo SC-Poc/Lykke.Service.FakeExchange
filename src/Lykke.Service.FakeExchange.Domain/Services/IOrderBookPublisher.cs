@@ -1,7 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Lykke.Service.FakeExchange.Core.Domain;
 
-namespace Lykke.Service.FakeExchange.Core.Services
+namespace Lykke.Service.FakeExchange.Domain.Services
 {
     public interface IOrderBookPublisher
     {

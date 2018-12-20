@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Common;
 using JetBrains.Annotations;
 using Lykke.Common.Log;
-using Lykke.Service.FakeExchange.Core.Services;
+using Lykke.Service.FakeExchange.Domain.Services;
 
-namespace Lykke.Service.FakeExchange.Services
+namespace Lykke.Service.FakeExchange.DomainServices
 {
     [UsedImplicitly]
     public class OrderBookPublishTimer : TimerPeriod

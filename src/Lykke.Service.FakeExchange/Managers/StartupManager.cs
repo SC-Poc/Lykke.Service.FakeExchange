@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Lykke.Sdk;
-using Lykke.Service.FakeExchange.Services;
+using Lykke.Service.FakeExchange.DomainServices;
 
 namespace Lykke.Service.FakeExchange.Managers
 {

@@ -1,4 +1,4 @@
-﻿namespace Lykke.Service.FakeExchange.Services.Settings
+﻿namespace Lykke.Service.FakeExchange.DomainServices.Settings
 {
     public class MatchingSettings
     {

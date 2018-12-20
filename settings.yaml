@@ -45,6 +45,21 @@ FakeExchangeService:
       types:
         - JsonArray
 
+  ExternalExchange:
+    OrderBooks:
+      ConnectionString:
+        settings-key: RawPriceRabbitMq
+        types:
+          - RabbitMq
+      Exchange:
+        settings-key: FakeExchangeService-ExternalExchange-OrderBooks-Exchange
+      Queue:
+        settings-key: FakeExchangeService-ExternalExchange-OrderBooks-Queue
+      
+  Matching:
+    MatchExternalOrderBooks:
+      settings-key: FakeExchangeService-Matching-MatchExternalOrderBooks
+
 MonitoringServiceClient:
   MonitoringServiceUrl:
     settings-key: MonitoringServiceUrl

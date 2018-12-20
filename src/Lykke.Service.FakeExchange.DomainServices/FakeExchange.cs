@@ -2,9 +2,10 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using Lykke.Service.FakeExchange.Core.Services;
+using Lykke.Service.FakeExchange.Domain;
+using Lykke.Service.FakeExchange.Domain.Services;
 
-namespace Lykke.Service.FakeExchange.Core.Domain
+namespace Lykke.Service.FakeExchange.DomainServices
 {
     public class FakeExchange : IFakeExchange
     {

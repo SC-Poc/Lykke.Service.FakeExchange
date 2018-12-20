@@ -3,10 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Lykke.Common.ExchangeAdapter.Server;
 using Lykke.Common.ExchangeAdapter.SpotController.Records;
-using Lykke.Service.FakeExchange.Core.Services;
+using Lykke.Service.FakeExchange.Domain.Services;
 using Lykke.Service.FakeExchange.ModelConverters;
 using Microsoft.AspNetCore.Mvc;
-using OrderStatus = Lykke.Service.FakeExchange.Core.Domain.OrderStatus;
+using OrderStatus = Lykke.Service.FakeExchange.Domain.OrderStatus;
 
 namespace Lykke.Service.FakeExchange.Controllers
 {

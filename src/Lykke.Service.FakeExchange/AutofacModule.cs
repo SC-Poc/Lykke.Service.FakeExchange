@@ -2,10 +2,10 @@
 using JetBrains.Annotations;
 using Lykke.Common.ExchangeAdapter.Server.Settings;
 using Lykke.Sdk;
-using Lykke.Service.FakeExchange.Core.Services;
+using Lykke.Service.FakeExchange.Domain.Services;
 using Lykke.Service.FakeExchange.Managers;
 using Lykke.Service.FakeExchange.RabbitMq.Publishers;
-using Lykke.Service.FakeExchange.RabbitMq.Subscriber;
+using Lykke.Service.FakeExchange.RabbitMq.Subscribers;
 using Lykke.Service.FakeExchange.Settings;
 using Lykke.Service.FakeExchange.Settings.Rabbit;
 using Lykke.SettingsReader;
@@ -25,7 +25,7 @@ namespace Lykke.Service.FakeExchange
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterModule(new Services.AutofacModule(
+            builder.RegisterModule(new DomainServices.AutofacModule(
                 _settings.CurrentValue.FakeExchangeService.Matching));
 
             builder.RegisterType<StartupManager>()

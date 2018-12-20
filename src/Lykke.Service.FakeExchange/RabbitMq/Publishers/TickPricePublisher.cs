@@ -7,7 +7,7 @@ using Lykke.Common.ExchangeAdapter.Server.Settings;
 using Lykke.Common.Log;
 using Lykke.RabbitMqBroker.Publisher;
 using Lykke.RabbitMqBroker.Subscriber;
-using Lykke.Service.FakeExchange.Core.Services;
+using Lykke.Service.FakeExchange.Domain.Services;
 using Microsoft.Extensions.Hosting;
 
 namespace Lykke.Service.FakeExchange.RabbitMq.Publishers
@@ -26,7 +26,7 @@ namespace Lykke.Service.FakeExchange.RabbitMq.Publishers
             _logFactory = logFactory;
         }
 
-        public Task PublishAsync(Core.Domain.TickPrice tickPrice)
+        public Task PublishAsync(Domain.TickPrice tickPrice)
         {
             if (tickPrice.Ask == 0 || tickPrice.Bid == 0)
             {

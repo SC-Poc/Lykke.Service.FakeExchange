@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <AssemblyName>Lykke.Service.FakeExchange.DomainServices</AssemblyName>
+    <RootNamespace>Lykke.Service.FakeExchange.DomainServices</RootNamespace>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Lykke.Service.FakeExchange.Domain\Lykke.Service.FakeExchange.Domain.csproj" />
+  </ItemGroup>
+</Project>

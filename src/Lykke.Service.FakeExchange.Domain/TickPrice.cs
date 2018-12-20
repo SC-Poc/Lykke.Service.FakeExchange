@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Lykke.Service.FakeExchange.Core.Domain
+namespace Lykke.Service.FakeExchange.Domain
 {
     public class TickPrice
     {

@@ -6,9 +6,9 @@ namespace Lykke.Service.FakeExchange.ModelConverters
 {
     public static class OrderBookConverter
     {
-        public static OrderBook ToModel(this Core.Domain.OrderBook orderBook)
+        public static OrderBook ToModel(this Domain.OrderBook orderBook)
         {
-            return new OrderBook(Core.Domain.FakeExchange.Name,
+            return new OrderBook(DomainServices.FakeExchange.Name,
                 orderBook.Pair,
                 DateTime.UtcNow,
                 orderBook.Asks.Select(x => new OrderBookItem(x.Price, x.RemainingVolume)),

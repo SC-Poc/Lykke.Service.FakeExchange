@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using Lykke.Service.FakeExchange.Core.Domain;
-using Lykke.Service.FakeExchange.Core.Services;
+using Lykke.Service.FakeExchange.Domain;
+using Lykke.Service.FakeExchange.Domain.Services;
 
-namespace Lykke.Service.FakeExchange.Services
+namespace Lykke.Service.FakeExchange.DomainServices
 {
     public class FakeApiClient : IFakeApiClient
     {
