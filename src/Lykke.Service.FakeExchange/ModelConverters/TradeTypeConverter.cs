@@ -1,5 +1,5 @@
 ﻿using System;
-using Lykke.Service.FakeExchange.Core.Domain;
+using Lykke.Service.FakeExchange.Domain;
 
 namespace Lykke.Service.FakeExchange.ModelConverters
 {

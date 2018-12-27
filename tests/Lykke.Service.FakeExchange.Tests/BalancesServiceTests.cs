@@ -1,5 +1,5 @@
-﻿using Lykke.Service.FakeExchange.Core.Domain;
-using Lykke.Service.FakeExchange.Services;
+﻿using Lykke.Service.FakeExchange.Domain;
+using Lykke.Service.FakeExchange.DomainServices.Balances;
 using Xunit;
 
 namespace Lykke.Service.FakeExchange.Tests

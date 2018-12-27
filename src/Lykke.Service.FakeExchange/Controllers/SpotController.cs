@@ -1,105 +1,136 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Lykke.Common.ExchangeAdapter.Server;
 using Lykke.Common.ExchangeAdapter.SpotController.Records;
-using Lykke.Service.FakeExchange.Core.Services;
+using Lykke.Service.FakeExchange.Domain;
+using Lykke.Service.FakeExchange.Domain.Services;
 using Lykke.Service.FakeExchange.ModelConverters;
 using Microsoft.AspNetCore.Mvc;
-using OrderStatus = Lykke.Service.FakeExchange.Core.Domain.OrderStatus;
+using OrderStatus = Lykke.Service.FakeExchange.Domain.OrderStatus;
 
 namespace Lykke.Service.FakeExchange.Controllers
 {
     public class SpotController : SpotControllerBase<IFakeApiClient>
     {
-        public override Task<OrderIdResponse> CreateLimitOrderAsync([FromBody] LimitOrderRequest request)
+        public override async Task<OrderIdResponse> CreateLimitOrderAsync([FromBody] LimitOrderRequest request)
         {
-            return Task.FromResult(new OrderIdResponse
+            Guid orderId = await Api.CreateLimitOrderAsync(
+                request.Instrument, request.Price, request.Volume, request.TradeType.ToDomainTradeType());
+
+            return new OrderIdResponse
             {
-                OrderId = Api.CreateLimitOrder(request.Instrument, request.Price, request.Volume, request.TradeType.ToDomainTradeType()).ToString()
-            });
+                OrderId = orderId.ToString()
+            };
         }
         
-        public override Task<GetLimitOrdersResponse> GetLimitOrdersAsync()
+        public override async Task<GetLimitOrdersResponse> GetLimitOrdersAsync()
         {
-            return Task.FromResult(new GetLimitOrdersResponse
+            IEnumerable<Order> orders = (await Api.GetOrdersAsync());
+
+            IReadOnlyCollection<OrderModel> model = orders
+                .Where(x => x.OrderStatus == OrderStatus.Active)
+                .Select(x => x.ToModel())
+                .ToArray();
+
+            return new GetLimitOrdersResponse
             {
-                Orders = Api.GetOrders().Where(x => x.OrderStatus == OrderStatus.Active).Select(x => x.ToModel()).ToList()
-            });
+                Orders = model
+            };
         }
 
-        public override Task<GetOrdersHistoryResponse> GetOrdersHistoryAsync()
+        public override async Task<GetOrdersHistoryResponse> GetOrdersHistoryAsync()
         {
-            return Task.FromResult(new GetOrdersHistoryResponse
+            IEnumerable<Order> orders = await Api.GetOrdersAsync();
+
+            IReadOnlyCollection<OrderModel> model = orders
+                .Where(x => x.OrderStatus != OrderStatus.Active)
+                .Select(x => x.ToModel())
+                .ToArray();
+
+            return new GetOrdersHistoryResponse
             {
-                Orders = Api.GetOrders().Where(x => x.OrderStatus != OrderStatus.Active).Select(x => x.ToModel()).ToList()
-            });
+                Orders = model
+            };
         }
 
-        public override Task<CancelLimitOrderResponse> CancelLimitOrderAsync([FromBody] CancelLimitOrderRequest request)
+        public override async Task<CancelLimitOrderResponse> CancelLimitOrderAsync([FromBody] CancelLimitOrderRequest request)
         {
-            if (Guid.TryParse(request.OrderId, out var orderId))
+            if (Guid.TryParse(request.OrderId, out Guid orderId))
             {
-                Api.CancelLimitOrder(orderId);
+                await Api.CancelLimitOrderAsync(orderId);
             }
 
-            return Task.FromResult(new CancelLimitOrderResponse
-                {
-                    OrderId = request.OrderId
-                });
+            return new CancelLimitOrderResponse
+            {
+                OrderId = request.OrderId
+            };
         }
 
-        public override Task<OrderModel> LimitOrderStatusAsync(string orderId)
+        public override async Task<OrderModel> LimitOrderStatusAsync(string orderId)
         {
-            if (Guid.TryParse(orderId, out var id))
+            if (Guid.TryParse(orderId, out Guid id))
             {
-                return Task.FromResult(Api.GetOrders().SingleOrDefault(x => x.Id == id)?.ToModel());
+                IEnumerable<Order> orders = await Api.GetOrdersAsync();
+
+                return orders.SingleOrDefault(x => x.Id == id)?.ToModel();
             }
 
-            return Task.FromResult((OrderModel)null);
+            return null;
         }
 
-        public override Task<GetWalletsResponse> GetWalletBalancesAsync()
+        public override async Task<GetWalletsResponse> GetWalletBalancesAsync()
         {
-            return Task.FromResult(new GetWalletsResponse()
+            var balances = await Api.GetBalancesAsync();
+
+            return new GetWalletsResponse
             {
-                Wallets = Api.GetBalances().Select(x => new WalletBalanceModel()
+                Wallets = balances.Select(x => new WalletBalanceModel
                 {
                     Asset = x.Key,
                     Balance = x.Value
                 }).ToList()
-            });
+            };
         }
 
-        public override Task<OrderIdResponse> CreateMarketOrderAsync([FromBody] MarketOrderRequest request)
+        public override async Task<OrderIdResponse> CreateMarketOrderAsync([FromBody] MarketOrderRequest request)
         {
-            return Task.FromResult(new OrderIdResponse
+            Guid orderId = await Api.CreateMarketOrderAsync(
+                request.Instrument, request.TradeType.ToDomainTradeType(), request.Volume);
+
+            return new OrderIdResponse
             {
-                OrderId = Api.CreateMarketOrder(request.Instrument, request.TradeType.ToDomainTradeType(), request.Volume).ToString()
-            });
+                OrderId = orderId.ToString()
+            };
         }
 
-        public override Task<OrderModel> MarketOrderStatusAsync(string orderId)
+        public override async Task<OrderModel> MarketOrderStatusAsync(string orderId)
         {
-            if (Guid.TryParse(orderId, out var id))
+            if (Guid.TryParse(orderId, out Guid id))
             {
-                return Task.FromResult(Api.GetOrders().SingleOrDefault(x => x.Id == id)?.ToModel());
+                IEnumerable<Order> orders = await Api.GetOrdersAsync();
+
+                return orders.SingleOrDefault(x => x.Id == id)?.ToModel();
             }
 
-            return Task.FromResult((OrderModel)null);
+            return null;
         }
 
-        public override Task<OrderIdResponse> ReplaceLimitOrderAsync([FromBody] ReplaceLimitOrderRequest request)
+        public override async Task<OrderIdResponse> ReplaceLimitOrderAsync([FromBody] ReplaceLimitOrderRequest request)
         {
-            if (Guid.TryParse(request.OrderIdToCancel, out var orderIdToCancel))
+            if (Guid.TryParse(request.OrderIdToCancel, out Guid orderIdToCancel))
             {
-                Api.CancelLimitOrder(orderIdToCancel);
+                await Api.CancelLimitOrderAsync(orderIdToCancel);
             }
-            
-            return Task.FromResult(new OrderIdResponse
+
+            Guid orderId = await Api.CreateLimitOrderAsync(
+                request.Instrument, request.Price, request.Volume, request.TradeType.ToDomainTradeType());
+
+            return new OrderIdResponse
             {
-                OrderId = Api.CreateLimitOrder(request.Instrument, request.Price, request.Volume, request.TradeType.ToDomainTradeType()).ToString()
-            });
+                OrderId = orderId.ToString()
+            };
         }
     }
 }
