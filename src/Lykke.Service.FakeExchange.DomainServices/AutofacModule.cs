@@ -12,17 +12,21 @@ namespace Lykke.Service.FakeExchange.DomainServices
     public class AutofacModule : Module
     {
         private readonly MatchingSettings _matchingSettings;
+        private readonly string _exchangeName;
 
         public AutofacModule(
-            MatchingSettings matchingSettings)
+            MatchingSettings matchingSettings,
+            string exchangeName)
         {
             _matchingSettings = matchingSettings;
+            _exchangeName = exchangeName;
         }
 
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<FakeExchange>()
                 .WithParameter(new TypedParameter(typeof(bool), _matchingSettings.MatchExternalOrderBooks))
+                .WithParameter(new TypedParameter(typeof(string), _exchangeName))
                 .As<IFakeExchange>()
                 .SingleInstance();
 

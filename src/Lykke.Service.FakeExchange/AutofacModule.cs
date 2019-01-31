@@ -26,7 +26,8 @@ namespace Lykke.Service.FakeExchange
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterModule(new DomainServices.AutofacModule(
-                _settings.CurrentValue.FakeExchangeService.Matching));
+                _settings.CurrentValue.FakeExchangeService.Matching,
+                _settings.CurrentValue.FakeExchangeService.ExchangeName));
 
             builder.RegisterType<StartupManager>()
                 .As<IStartupManager>();

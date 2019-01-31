@@ -7,6 +7,8 @@ namespace Lykke.Service.FakeExchange.Settings
     [UsedImplicitly(ImplicitUseTargetFlags.WithMembers)]
     public class FakeExchangeSettings
     {
+        public string ExchangeName { set; get; }
+        
         public DbSettings Db { get; set; }
         
         public OrderBookProcessingSettings RabbitMq { get; set; }

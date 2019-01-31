@@ -10,14 +10,14 @@ namespace Lykke.Service.FakeExchange.DomainServices
 {
     public class FakeExchange : IFakeExchange
     {
-        public static string Name = "fakeExchange";
-
         private readonly bool _matchExternalOrderBooks;
         private readonly IBalancesService _balancesService;
         private readonly IClientOrdersService _clientOrdersService;
         private readonly IOrderBookPublisher _orderBookPublisher;
         private readonly ITickPricePublisher _tickPricePublisher;
-
+        
+        private readonly string _exchangeName;
+        
         private readonly ConcurrentDictionary<string, OrderBook> _orderBooks = 
             new ConcurrentDictionary<string, OrderBook>(StringComparer.InvariantCultureIgnoreCase);
         
@@ -26,13 +26,15 @@ namespace Lykke.Service.FakeExchange.DomainServices
             IClientOrdersService clientOrdersService,
             IOrderBookPublisher orderBookPublisher,
             ITickPricePublisher tickPricePublisher,
-            bool matchExternalOrderBooks)
+            bool matchExternalOrderBooks,
+            string exchangeName)
         {
             _balancesService = balancesService;
             _clientOrdersService = clientOrdersService;
             _orderBookPublisher = orderBookPublisher;
             _tickPricePublisher = tickPricePublisher;
             _matchExternalOrderBooks = matchExternalOrderBooks;
+            _exchangeName = exchangeName;
         }
 
         public Task<IReadOnlyCollection<string>> GetAllInstrumentsAsync()
@@ -45,6 +47,11 @@ namespace Lykke.Service.FakeExchange.DomainServices
             _orderBooks.TryGetValue(assetPair, out OrderBook orderBook);
 
             return Task.FromResult(orderBook);
+        }
+        
+        public Task<string> GetNameAsync()
+        {
+            return Task.FromResult(_exchangeName);
         }
         
         public async Task<Guid> CreateOrderAsync(Order order)
@@ -129,7 +136,7 @@ namespace Lykke.Service.FakeExchange.DomainServices
             {
                 await _orderBookPublisher.PublishAsync(orderBook);
 
-                await _tickPricePublisher.PublishAsync(TickPrice.FromOrderBook(FakeExchange.Name, orderBook));
+                await _tickPricePublisher.PublishAsync(TickPrice.FromOrderBook(_exchangeName, orderBook));
             }
         }
     }

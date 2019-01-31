@@ -29,8 +29,8 @@ namespace Lykke.Service.FakeExchange.Controllers
         public async Task<OrderBook> GetOrderBook(string assetPair)
         {
             Domain.OrderBook order = await _fakeExchange.GetOrderBookAsync(assetPair);
-
-            return order?.ToModel();
+            
+            return order?.ToModel(await _fakeExchange.GetNameAsync());
         }
     }
 }
