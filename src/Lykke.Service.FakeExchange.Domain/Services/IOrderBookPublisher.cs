@@ -4,6 +4,6 @@ namespace Lykke.Service.FakeExchange.Domain.Services
 {
     public interface IOrderBookPublisher
     {
-        Task PublishAsync(OrderBook orderBook);
+        Task PublishAsync(string exchangeName, OrderBook orderBook);
     }
 }
