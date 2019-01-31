@@ -6,6 +6,8 @@ namespace Lykke.Service.FakeExchange.Domain.Services
 {
     public interface IFakeExchange
     {
+        Task<string> GetNameAsync();
+        
         Task<Guid> CreateOrderAsync(Order order);
         
         Task<IReadOnlyCollection<Order>> GetOrdersAsync(string clientId);
