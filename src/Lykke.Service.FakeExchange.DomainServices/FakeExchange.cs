@@ -135,7 +135,7 @@ namespace Lykke.Service.FakeExchange.DomainServices
         {
             if (!orderBook.IsEmpty)
             {
-                await _orderBookPublisher.PublishAsync(orderBook);
+                await _orderBookPublisher.PublishAsync(_exchangeName, orderBook);
 
                 await _tickPricePublisher.PublishAsync(TickPrice.FromOrderBook(_exchangeName, orderBook));
             }

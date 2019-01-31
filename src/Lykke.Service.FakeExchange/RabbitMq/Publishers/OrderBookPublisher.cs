@@ -17,25 +17,22 @@ namespace Lykke.Service.FakeExchange.RabbitMq.Publishers
     public class OrderBookPublisher : IOrderBookPublisher, IHostedService, IDisposable
     {
         private readonly RmqOutput _publisherSettings;
-        private readonly IFakeExchange _fakeExchange;
         private readonly ILogFactory _logFactory;
 
         private RabbitMqPublisher<OrderBook> _publisher;
 
         public OrderBookPublisher(
             RmqOutput publisherSettings,
-            IFakeExchange fakeExchange,
             ILogFactory logFactory)
         {
             _publisherSettings = publisherSettings;
-            _fakeExchange = fakeExchange;
             _logFactory = logFactory;
         }
 
-        public async Task PublishAsync(Domain.OrderBook orderBook)
+        public async Task PublishAsync(string exchangeName, Domain.OrderBook orderBook)
         {
             var message = new OrderBook(
-                await _fakeExchange.GetNameAsync(),
+                exchangeName,
                 orderBook.Pair,
                 DateTime.UtcNow,
                 orderBook.Asks.Select(x => new OrderBookItem(x.Price, x.RemainingVolume)),
