@@ -21,25 +21,27 @@ namespace Lykke.Service.FakeExchange.RabbitMq.Publishers
 
         private RabbitMqPublisher<OrderBook> _publisher;
 
-        public OrderBookPublisher(RmqOutput publisherSettings, ILogFactory logFactory)
+        public OrderBookPublisher(
+            RmqOutput publisherSettings,
+            ILogFactory logFactory)
         {
             _publisherSettings = publisherSettings;
             _logFactory = logFactory;
         }
 
-        public Task PublishAsync(Domain.OrderBook orderBook)
+        public async Task PublishAsync(string exchangeName, Domain.OrderBook orderBook)
         {
             var message = new OrderBook(
-                DomainServices.FakeExchange.Name,
+                exchangeName,
                 orderBook.Pair,
                 DateTime.UtcNow,
                 orderBook.Asks.Select(x => new OrderBookItem(x.Price, x.RemainingVolume)),
                 orderBook.Bids.Select(x => new OrderBookItem(x.Price, x.RemainingVolume)));
 
             if (message.AskLevels.IsEmpty && message.BidLevels.IsEmpty)
-                return Task.CompletedTask;
+                return;
 
-            return _publisher.ProduceAsync(message);
+            await _publisher.ProduceAsync(message);
         }
 
         public Task StartAsync(CancellationToken cancellationToken)

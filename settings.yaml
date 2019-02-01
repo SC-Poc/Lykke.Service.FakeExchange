@@ -1,4 +1,8 @@
 FakeExchangeService:
+
+  ExchangeName:
+    settings-key: FakeExchangeService-ExchangeName
+
   Db:
     LogsConnectionString:
       settings-key: FakeExchangeService-LogsConnectionString
