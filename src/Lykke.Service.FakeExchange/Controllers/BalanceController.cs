@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Lykke.Common.ExchangeAdapter.Server;
+using Lykke.Service.FakeExchange.Domain;
 using Lykke.Service.FakeExchange.Domain.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,9 +21,22 @@ namespace Lykke.Service.FakeExchange.Controllers
         }
 
         [HttpGet]
-        public Task<IReadOnlyDictionary<string, decimal>> GetBalances()
+        public async Task<WalletModel> GetBalances()
         {
-            return RestApi().GetBalancesAsync();
+            var balances = await RestApi().GetBalancesAsync();
+
+            return new WalletModel
+            {
+                Wallets = balances
+                    .Keys
+                    .Select(x =>
+                        new WalletBalance
+                        {
+                            Asset = x,
+                            Balance = balances[x],
+                            Reserved = 0
+                        }).ToList()
+            };
         }
 
         [HttpPost]
