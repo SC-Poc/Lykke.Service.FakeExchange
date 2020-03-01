@@ -34,6 +34,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lykke.Service.FakeExchange.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lykke.Service.FakeExchange.DomainServices", "src\Lykke.Service.FakeExchange.DomainServices\Lykke.Service.FakeExchange.DomainServices.csproj", "{801FB1EF-5B63-4165-BFD5-263D531646B3}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{19BBFA6B-2488-4891-849A-7D7B69739A61}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{F9A65613-66EB-4E26-911F-627CC21EA0D7}"
+ProjectSection(SolutionItems) = preProject
+	.github\workflows\dotnetcore.yml = .github\workflows\dotnetcore.yml
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -74,6 +81,7 @@ Global
 		{A61FFDEE-5725-4650-A788-6E55EE5EFD5B} = {8F9036B1-5106-4C69-B2D2-B78EE52687A0}
 		{82C76C25-B718-4860-BDEB-48DAC8E1FECA} = {C00F04E6-0F6B-4B4D-ADDC-0217DF941667}
 		{801FB1EF-5B63-4165-BFD5-263D531646B3} = {C00F04E6-0F6B-4B4D-ADDC-0217DF941667}
+		{F9A65613-66EB-4E26-911F-627CC21EA0D7} = {19BBFA6B-2488-4891-849A-7D7B69739A61}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EB6C0EF4-AA6A-444D-8603-3669F73A58BC}
